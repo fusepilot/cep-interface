@@ -24,7 +24,7 @@ function evalScript(script: string, callback: (executionResult: any) => void) {
   try {
     ${script}
   } catch(e) {
-    '{"error": "' + e.name + '", ' + '"message": "' + e.message.replace(/"/g, \"'\") + '"}'
+    '{"error": "' + e.name + '", "message": "' + e.message.replace(/"/g, \"'\") + '", "stack": "' + e.stack.replace(/"/g, \"'\") + '"}'
   }
   `
   window.__adobe_cep__.evalScript(script, callback)
@@ -78,7 +78,9 @@ export function evalExtendscript(
 
         if (executionResult.error != undefined) {
           throw new Error(
-            `ExtendScript ${executionResult.error}: ${executionResult.message}`
+            `ExtendScript ${executionResult.error}: ${
+              executionResult.message
+            }\n${executionResult.stack}`
           )
         }
 

@@ -6,16 +6,13 @@
   "types": "lib/index.d.ts",
   "license": "MIT",
   "repository": "https://github.com/fusepilot/cep-interface",
-  "files": [
-    "src",
-    "lib"
-  ],
+  "files": ["src", "lib"],
   "scripts": {
-    "prepublish": "yarn run build",
     "start": "tsc -w",
     "build": "tsc"
   },
   "devDependencies": {
-    "typescript": "^2.6.2"
+    "@types/node": "^9.4.6",
+    "typescript": "^2.7.2"
   }
 }
