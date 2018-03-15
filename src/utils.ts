@@ -39,6 +39,7 @@ export function loadExtendscript(fileName: string) {
   if (!fileName) throw Error('Filename cannot be empty.')
 
   var extensionRoot = cs.getSystemPath(cs.SystemPath.EXTENSION)
+  // @ts-ignore
   return new Promise(function(resolve, reject) {
     const filePath = path.join(extensionRoot, fileName)
     evalScript(`$.evalFile("${filePath}")`, function(result) {
@@ -66,6 +67,7 @@ export function evalExtendscript(
 ) {
   if (!cs.inCEPEnvironment()) console.warn('Not in CEP environment.')
 
+  // @ts-ignore
   return new Promise(function(resolve, reject) {
     var doEvalScript = function() {
       evalScript(script, function(executionResult: any) {
