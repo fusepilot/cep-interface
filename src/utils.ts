@@ -97,3 +97,21 @@ export function evalExtendscript(
     }
   })
 }
+
+export interface ContextMenuItem {
+  id?: string
+  label?: string
+  enabled?: boolean
+  checkable?: boolean
+  checked?: boolean
+  icon?: string
+  menu?: ContextMenuItem[]
+}
+
+export interface ContextMenu {
+  menu: ContextMenuItem[]
+}
+
+export function setContextMenuByObject(menu: ContextMenu, callback: Function) {
+  cs.setContextMenuByJSON(JSON.stringify(menu), callback)
+}
