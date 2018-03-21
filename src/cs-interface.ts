@@ -294,6 +294,42 @@ export class ApiVersion {
   ) {}
 }
 
+/**
+ * @class MenuItemStatus
+ * Stores flyout menu item status
+ *
+ * Since 5.2.0
+ *
+ * @param menuItemLabel  The menu item label.
+ * @param enabled        True if user wants to enable the menu item.
+ * @param checked        True if user wants to check the menu item.
+ *
+ * @return MenuItemStatus object.
+ */
+export interface MenuItemStatus {
+  menuItemLabel: string
+  enabled: boolean
+  checked: boolean
+}
+
+/**
+ * @class ContextMenuItemStatus
+ * Stores the status of the context menu item.
+ *
+ * Since 5.2.0
+ *
+ * @param menuItemID     The menu item id.
+ * @param enabled        True if user wants to enable the menu item.
+ * @param checked        True if user wants to check the menu item.
+ *
+ * @return MenuItemStatus object.
+ */
+export interface ContextMenuItemStatus {
+  menuItemID: string
+  enabled: boolean
+  checked: boolean
+}
+
 export const THEME_COLOR_CHANGED_EVENT: string =
   'com.adobe.csxs.events.ThemeColorChanged'
 
@@ -356,6 +392,17 @@ export function requestOpenExtension(extensionId: string, params: string) {
 }
 
 /**
+ * Retrieves host capability information for the application
+ * in which the extension is currently running.
+ *
+ * @return A \c #HostCapabilities object.
+ */
+export function getHostCapabilities() {
+  var hostCapabilities = JSON.parse(window.__adobe_cep__.getHostCapabilities())
+  return hostCapabilities
+}
+
+/**
  * Triggers a CEP event programmatically. Yoy can use it to dispatch
  * an event of a predefined type, or of a type you have defined.
  *
@@ -414,6 +461,69 @@ export function getNetworkPreferences(): any {
  */
 export function getCurrentApiVersion(): any {
   return JSON.parse(window.__adobe_cep__.getCurrentApiVersion())
+}
+
+/**
+ * Set panel flyout menu by an XML.
+ *
+ * Since 5.2.0
+ *
+ * If user wants to be noticed when clicking an menu item, user needs to register "com.adobe.csxs.events.flyoutMenuClicked" Event by calling AddEventListener.
+ * When an menu item is clicked, the event callback function will be called.
+ * The "data" attribute of event is an object which contains "menuId" and "menuName" attributes.
+ *
+ * @param menu     A XML string which describes menu structure.
+ * An example menu XML:
+ * <Menu>
+ *   <MenuItem Id="menuItemId1" Label="TestExample1" Enabled="true" Checked="false"/>
+ *   <MenuItem Label="TestExample2">
+ *     <MenuItem Label="TestExample2-1" >
+ *       <MenuItem Label="TestExample2-1-1" Enabled="false" Checked="true"/>
+ *     </MenuItem>
+ *     <MenuItem Label="TestExample2-2" Enabled="true" Checked="true"/>
+ *   </MenuItem>
+ *   <MenuItem Label="---" />
+ *   <MenuItem Label="TestExample3" Enabled="false" Checked="false"/>
+ * </Menu>
+ *
+ */
+export function setPanelFlyoutMenu(menu: string) {
+  if ('string' != typeof menu) {
+    return
+  }
+
+  window.__adobe_cep__.invokeSync('setPanelFlyoutMenu', menu)
+}
+
+/**
+ * Updates a menu item in the extension window's flyout menu, by setting the enabled
+ * and selection status.
+ *
+ * Since 5.2.0
+ *
+ * @param menuItemLabel The menu item label.
+ * @param enabled       True to enable the item, false to disable it (gray it out).
+ * @param checked       True to select the item, false to deselect it.
+ *
+ * @return false when the host application does not support this functionality (HostCapabilities.EXTENDED_PANEL_MENU is false).
+ *         Fails silently if menu label is invalid.
+ *
+ * @see HostCapabilities.EXTENDED_PANEL_MENU
+ */
+export function updatePanelMenuItem(
+  menuItemLabel: string,
+  enabled: boolean,
+  checked: boolean
+) {
+  var ret = false
+  if (getHostCapabilities().EXTENDED_PANEL_MENU) {
+    var itemStatus: MenuItemStatus = { menuItemLabel, enabled, checked }
+    ret = window.__adobe_cep__.invokeSync(
+      'updatePanelMenuItem',
+      JSON.stringify(itemStatus)
+    )
+  }
+  return ret
 }
 
 /**
@@ -589,4 +699,59 @@ export function getSystemPath(pathType: string) {
     path = path.replace('file://', '')
   }
   return path
+}
+
+/**
+ * Set context menu by XML string.
+ *
+ * Since 5.2.0
+ *
+ * There are a number of conventions used to communicate what type of menu item to create and how it should be handled.
+ * - an item without menu ID or menu name is disabled and is not shown.
+ * - if the item name is "---" (three hyphens) then it is treated as a separator. The menu ID in this case will always be NULL.
+ * - Checkable attribute takes precedence over Checked attribute.
+ *
+ * @param menu      A XML string which describes menu structure.
+ * @param callback  The callback function which is called when a menu item is clicked. The only parameter is the returned ID of clicked menu item.
+ *
+ * An example menu XML:
+ * <Menu>
+ *   <MenuItem Id="menuItemId1" Label="TestExample1" Enabled="true" Checkable="true" Checked="false"/>
+ *   <MenuItem Id="menuItemId2" Label="TestExample2">
+ *     <MenuItem Id="menuItemId2-1" Label="TestExample2-1" >
+ *       <MenuItem Id="menuItemId2-1-1" Label="TestExample2-1-1" Enabled="false" Checkable="true" Checked="true"/>
+ *     </MenuItem>
+ *     <MenuItem Id="menuItemId2-2" Label="TestExample2-2" Enabled="true" Checkable="true" Checked="true"/>
+ *   </MenuItem>
+ *   <MenuItem Label="---" />
+ *   <MenuItem Id="menuItemId3" Label="TestExample3" Enabled="false" Checkable="true" Checked="false"/>
+ * </Menu>
+ */
+export function setContextMenu(menu: string, callback: Function) {
+  if ('string' != typeof menu) {
+    return
+  }
+
+  window.__adobe_cep__.invokeAsync('setContextMenu', menu, callback)
+}
+
+/**
+ * Updates a context menu item by setting the enabled and selection status.
+ *
+ * Since 5.2.0
+ *
+ * @param menuItemID    The menu item ID.
+ * @param enabled       True to enable the item, false to disable it (gray it out).
+ * @param checked       True to select the item, false to deselect it.
+ */
+export function updateContextMenuItem(
+  menuItemID: string,
+  enabled: boolean,
+  checked: boolean
+) {
+  var itemStatus: ContextMenuItemStatus = { menuItemID, enabled, checked }
+  return window.__adobe_cep__.invokeSync(
+    'updateContextMenuItem',
+    JSON.stringify(itemStatus)
+  )
 }
