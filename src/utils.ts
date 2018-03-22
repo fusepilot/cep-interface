@@ -35,7 +35,7 @@ function evalScript(script: string, callback: (executionResult: any) => void) {
  *
  * @param fileName The name of the extendscript file.
  */
-export function loadExtendscript(fileName: string) {
+export function loadExtendscript(fileName: string): Promise<any> {
   if (!fileName) throw Error('Filename cannot be empty.')
 
   var extensionRoot = cs.getSystemPath(cs.SystemPath.EXTENSION)
@@ -61,10 +61,7 @@ export function loadExtendscript(fileName: string) {
  * @param script    The JavaScript script.
  * @return The result of execution. If the result is a valid JSON string, it will return the parsed JSON object.
  */
-export function evalExtendscript(
-  script: string,
-  { async = false }: { async?: boolean } = {}
-) {
+export function evalExtendscript(script: string): Promise<any> {
   if (!cs.inCEPEnvironment()) console.warn('Not in CEP environment.')
 
   // @ts-ignore
@@ -90,11 +87,7 @@ export function evalExtendscript(
       })
     }
 
-    if (async) {
-      setTimeout(doEvalScript, 0)
-    } else {
-      doEvalScript()
-    }
+    setTimeout(doEvalScript, 0)
   })
 }
 
