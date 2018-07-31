@@ -1,6 +1,6 @@
 {
   "name": "cep-interface",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Convenience functions that extend CSInterface.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -10,6 +10,7 @@
     "lib"
   ],
   "scripts": {
+    "prepublish": "tsc",
     "start": "tsc -w",
     "build": "tsc"
   },
