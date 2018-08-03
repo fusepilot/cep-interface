@@ -20,13 +20,15 @@ function evalScript(script: string, callback: (executionResult: any) => void) {
   if (callback === null || callback === undefined) {
     callback = function callback(result) {};
   }
-  script = `
-  try {
-    ${script}
-  } catch(e) {
-    '{"error": "' + e.name + '", "message": "' + e.message.replace(/"/g, \"'\") + '", "stack": "' + (e.stack ? e.stack.replace(/"/g, \"'\") : \"\") + '"}'
-  }
-  `;
+  script = `try {
+  ${script}
+} catch(e) {
+  app.objectToJSON({
+    error: e.name,
+    message: e.message,
+    stack: (e.stack ? e.stack : '')
+  });
+}`;
   window.__adobe_cep__.evalScript(script, callback);
 }
 
@@ -41,7 +43,8 @@ export function loadExtendscript(fileName: string): Promise<any> {
   var extensionRoot = cs.getSystemPath(cs.SystemPath.EXTENSION);
   // @ts-ignore
   return new Promise(function(resolve, reject) {
-    const filePath = path.join(extensionRoot, fileName);
+    const filePath = path.join(extensionRoot, fileName).replace("\\", "/");
+
     evalScript(`$.evalFile("${filePath}")`, function(result) {
       if (!result || result === "undefined") return resolve();
 
