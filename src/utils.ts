@@ -21,14 +21,10 @@ function evalScript(script: string, callback: (executionResult: any) => void) {
     callback = function callback(result) {};
   }
   script = `try {
-  ${script}
-} catch(e) {
-  app.objectToJSON({
-    error: e.name,
-    message: e.message,
-    stack: (e.stack ? e.stack : '')
-  });
-}`;
+    ${script}
+  } catch(e) {
+    '{"error": "' + e.name + '", "message": "' + e.message.replace(/"/g, \"'\") + '", "stack": "' + (e.stack ? e.stack.replace(/"/g, \"'\") : \"\") + '"}'
+  }`;
   window.__adobe_cep__.evalScript(script, callback);
 }
 
