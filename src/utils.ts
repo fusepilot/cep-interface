@@ -48,6 +48,16 @@ export function loadExtendscript(fileName: string): Promise<any> {
         result = JSON.parse(result);
       } catch (err) {}
 
+      if (result.error != undefined) {
+        reject(
+          new Error(
+            `ExtendScript ${result.error}: ${
+              result.message
+            }\n${result.stack}`
+          )
+        );
+      }
+
       resolve(result);
     });
   });
