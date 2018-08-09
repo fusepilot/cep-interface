@@ -39,7 +39,10 @@ export function loadExtendscript(fileName: string): Promise<any> {
   var extensionRoot = cs.getSystemPath(cs.SystemPath.EXTENSION);
   // @ts-ignore
   return new Promise(function(resolve, reject) {
-    const filePath = path.join(extensionRoot, fileName).split("\\").join("/");
+    const filePath = path
+      .join(extensionRoot, fileName)
+      .split("\\")
+      .join("/");
 
     evalScript(`$.evalFile("${filePath}")`, function(result) {
       if (!result || result === "undefined") return resolve();
@@ -51,9 +54,7 @@ export function loadExtendscript(fileName: string): Promise<any> {
       if (result.error != undefined) {
         reject(
           new Error(
-            `ExtendScript ${result.error}: ${
-              result.message
-            }\n${result.stack}`
+            `ExtendScript ${result.error}: ${result.message}\n${result.stack}`
           )
         );
       }
