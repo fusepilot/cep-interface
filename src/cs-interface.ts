@@ -199,7 +199,7 @@ export interface GradientStop {
 
 /**
  * Stores gradient color information.
- * 
+ *
  * @param type          The gradient type, must be "linear".
  * @param direction     A Direction object for the direction of the gradient
  (up, down, right, or left).
@@ -342,7 +342,7 @@ export const THEME_COLOR_CHANGED_EVENT: string =
 /** Returns true if a cep environment is detected.
  */
 export function inCEPEnvironment(): boolean {
-  return !!window.cep && !!window.cep_node && !!window.__adobe_cep__
+  return !!window.cep || !!window.cep_node || !!window.__adobe_cep__
 }
 
 /** Retrieves information about the host environment in which the
@@ -896,7 +896,7 @@ export function setContextMenu(menu: string, callback: Function) {
  * - an item without menu ID or menu name is disabled and is not shown.
  * - if the item label is "---" (three hyphens) then it is treated as a separator. The menu ID in this case will always be NULL.
  * - Checkable attribute takes precedence over Checked attribute.
- * - a PNG icon. For optimal display results please supply a 16 x 16px icon as larger dimensions will increase the size of the menu item. 
+ * - a PNG icon. For optimal display results please supply a 16 x 16px icon as larger dimensions will increase the size of the menu item.
      The Chrome extension contextMenus API was taken as a reference.
  * - the items with icons and checkable items cannot coexist on the same menu level. The former take precedences over the latter.
      https://developer.chrome.com/extensions/contextMenus
@@ -906,7 +906,7 @@ export function setContextMenu(menu: string, callback: Function) {
  *
  * @description An example menu JSON:
  *
- * { 
+ * {
  *      "menu": [
  *          {
  *              "id": "menuItemId1",
