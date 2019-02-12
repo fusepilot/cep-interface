@@ -1,4 +1,4 @@
-/// <reference path="./window.d.ts" />
+/// <reference path="../window.d.ts" />
 
 export const CSXSWindowType = {
   _PANEL: 'Panel',
